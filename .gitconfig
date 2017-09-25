@@ -1,0 +1,21 @@
+[color "branch"]
+
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+
+	meta = yellow bold
+	frag = magenta bold # line info
+
+[help]
+
+	# Automatically correct and execute mistyped commands
+	autocorrect = 1
+
+[user]
+	email = rcouto@twitter.com
+	name = rcouto
+[push]
+	default = current
