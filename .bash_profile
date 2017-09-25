@@ -1,6 +1,7 @@
 source ~/.aliases
 source ~/.bash_prompt
 source ~/.git-completion.bash
+source ~/.inputrc
 
 if [ -f ~/.git-completion.bash ]; then
 	. ~/.git-completion.bash
@@ -14,12 +15,12 @@ fi
 bind '"\t":menu-complete'
 
 export GOPATH="$HOME/workspace"
-export PATH="/usr/local/bin:$PATH"
 export PATH="$PATH:$GOPATH/bin"
 export EDITOR=vim
 export BROWSER=/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
 HISTSIZE=10000
 HISTFILESIZE=erasedups
+
 unget () {
 	if [[ $# -eq 0 ]]; then
 					echo "No package given for removal"
@@ -34,5 +35,3 @@ unget () {
 				echo "Not a valid package: $1"
 	fi
 }
-
-export PATH="/usr/local/opt/bison/bin:$PATH"
