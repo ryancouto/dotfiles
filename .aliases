@@ -8,12 +8,39 @@ alias .....="cd ../../../.."
 # alias ~="cd ~" # `cd` is probably faster to type though
 # alias -- -="cd -"
 
+# Scoot scripts
+alias tryout="~/workspace/source/scoot/config/scripts/tryout.sh"
+alias test_scoot="sh ~/workspace/source/src/go/twitter.biz/scoot/scripts/update-source.sh test"
+alias bump_scoot="sh ~/workspace/source/src/go/twitter.biz/scoot/scripts/update-source.sh bump"
+alias dev_deploy="sh ~/workspace/source/scoot/config/scripts/dev_deploy.sh"
+
+alias kill_scoot="(lsof -c scheduler -t | xargs kill) && (lsof -c workerserver -t | xargs kill) && (lsof -c apiserver -t | xargs kill)"
+
 # Shortcuts
 alias w="cd ~/workspace"
 alias g="git"
-# alias h="history"
-# alias j="jobs"
+alias h="history"
+alias j="jobs"
 alias rmhist="history -c; history -w; rm ~/.bash_history"
+
+# packer
+add_sickle() {
+	if echo "$*" | grep -q 'build'; then
+		./pants test binary scoot/sickle::
+	fi
+	if echo "$*" | grep -q 'fetch'; then
+		packer fetch scoot-service scoot-scootapi  --cluster=smf1
+		packer fetch scoot-service scoot-snapshot-db --cluster=smf1
+	fi
+	tar czvf dist/sickle.tar.gz -C dist sickle.pex scoot-snapshot-db scootapi
+	packer add_version rcouto scoot-sickle --cluster=smf1
+	packer add_version rcouto scoot-sickle --cluster=atla
+}
+
+set_live_ci_pex() {
+	packer set_live jenkins monoci-pex-release latest --cluster=smf1
+	packer set_live jenkins monoci-pex-release latest --cluster=atla
+}
 
 # git
 alias ga="git add"
@@ -21,6 +48,8 @@ alias gs="git status"
 alias gcm="git commit -m"
 alias gc="git checkout"
 alias gcb="git checkout -b"
+alias gb="git branch"
+alias gbd="git branch -D"
 alias gd="git diff"
 alias gres="git reset"
 alias greb="git rebase"
@@ -33,6 +62,9 @@ alias gm="git merge"
 alias ggc="git gc"
 alias grp="git repack"
 alias grev="git review"
+
+# Switch from landed feature branch to up-to-date master
+alias reset="gc master && arc clean && git pull"
 
 alias af="arc feature"
 alias ad="arc diff --browse"
