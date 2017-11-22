@@ -1,9 +1,9 @@
 source ~/.aliases
 source ~/.bash_prompt
-source ~/.git-completion.bash
+source ~/.git-completion
 
-if [ -f ~/.git-completion.bash ]; then
-	. ~/.git-completion.bash
+if [ -f ~/.git-completion ]; then
+	. ~/.git-completion
 	# Add git completion to aliases
 	__git_complete g __git_main
 	__git_complete gc _git_checkout
