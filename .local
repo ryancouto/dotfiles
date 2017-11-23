@@ -1,3 +1,4 @@
+#!/bin/bash
 source ~/.aliases
 source ~/.bash_prompt
 source ~/.git-completion
