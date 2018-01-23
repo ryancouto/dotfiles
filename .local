@@ -16,28 +16,10 @@ bind '"\t":menu-complete'
 
 export GOPATH="$HOME/workspace"
 export PATH="/usr/local/bin:$PATH"
-# export PATH="$PATH:$GOPATH/bin"
+export PATH="$PATH:$GOPATH/bin"
 export EDITOR=vim
 export BROWSER=/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
 HISTSIZE=10000
 HISTFILESIZE=erasedups
-unget () {
-	if [[ $# -eq 0 ]]; then
-					echo "No package given for removal"
-	exit 1
-	fi
-	if [[ -d $GOPATH/src/"$1" ]]; then
-				$(go clean -i "$1")
-				echo "Go cleaning "$1""
-				rm -rf $GOPATH/src/"$1"
-				echo "Removing src/"$1""
-	else
-				echo "Not a valid package: $1"
-	fi
-}
-
-kurl () {
-	curl --compressed --negotiate -u : "$@"
-}
 
 export PATH="/usr/local/opt/bison/bin:$PATH"

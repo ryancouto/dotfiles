@@ -42,6 +42,27 @@ set_live_ci_pex() {
 	packer set_live jenkins monoci-pex-release latest --cluster=atla
 }
 
+# go
+unget () {
+	if [[ $# -eq 0 ]]; then
+					echo "No package given for removal"
+	exit 1
+	fi
+	if [[ -d $GOPATH/src/"$1" ]]; then
+				$(go clean -i "$1")
+				echo "Go cleaning "$1""
+				rm -rf $GOPATH/src/"$1"
+				echo "Removing src/"$1""
+	else
+				echo "Not a valid package: $1"
+	fi
+}
+
+# kerberos curl
+kurl () {
+	curl --compressed --negotiate -u : "$@"
+}
+
 # git
 alias ga="git add"
 alias gs="git status"
