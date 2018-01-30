@@ -83,6 +83,7 @@ alias gm="git merge"
 alias ggc="git gc"
 alias grp="git repack"
 alias grev="git review"
+alias gbs="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 
 # Switch from landed feature branch to up-to-date master
 alias reset="gc master && arc clean && git pull"
