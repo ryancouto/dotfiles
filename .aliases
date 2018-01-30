@@ -64,6 +64,7 @@ kurl () {
 }
 
 # git
+alias g="git"
 alias ga="git add"
 alias gs="git status"
 alias gcm="git commit -m"
@@ -74,7 +75,8 @@ alias gbd="git branch -D"
 alias gd="git diff"
 alias gres="git reset"
 alias greb="git rebase"
-alias gpu="git pull --rebase"
+alias gpu="git pull"
+alias gpur="git pull --rebase"
 alias gp="git push"
 alias gl="git log"
 alias glol="git log --pretty=oneline --abbrev-commit"
