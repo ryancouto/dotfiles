@@ -9,7 +9,9 @@ alias .....="cd ../../../.."
 # alias -- -="cd -"
 
 # Scoot scripts
-alias tryout="~/workspace/source/scoot/config/scripts/tryout.sh"
+tryout() {
+	$(git rev-parse --show-toplevel)/scoot/config/scripts/tryout.sh $@
+}
 alias test_scoot="sh ~/workspace/source/src/go/twitter.biz/scoot/scripts/update-source.sh test"
 alias bump_scoot="sh ~/workspace/source/src/go/twitter.biz/scoot/scripts/update-source.sh bump"
 alias dev_deploy="sh ~/workspace/source/scoot/config/scripts/dev_deploy.sh"
