@@ -15,8 +15,8 @@
 	autocorrect = 1
 
 [user]
-	email = rcouto@twitter.com
 	name = rcouto
+	email = rcouto@twitter.com
 [push]
 	default = current
 [merge]

@@ -89,6 +89,7 @@ alias ggc="git gc"
 alias grp="git repack"
 alias grev="git review"
 alias gbs="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
+alias unfuck="killall watchman && rm .git/fs_cache"
 # gerrit git
 grt () {
 				branch="$(git branch | awk '{print $2}' | tr -d '[:space:]')"
