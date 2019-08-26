@@ -77,7 +77,7 @@ else
 fi;
 
 # Set the terminal title and prompt.
-PS1="\[${yellow}\]\D{%T} \[${green}\]\W \[${violet}\]\$(prompt_git) \[${white}\]\$ \[${reset}\]";
+PS1="\[${yellow}\]\D{%T} \[${green}\]\W \[${violet}\]\$(prompt_git) \[${white}\]☭ \[${reset}\]";
 export PS1;
 
 PS2="\[${cyan}\]→ \[${reset}\]";

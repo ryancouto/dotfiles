@@ -7,7 +7,6 @@ set path=**
 " Display all matching files when we tab complete
 set wildmenu
 
-
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()

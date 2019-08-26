@@ -5,6 +5,7 @@ source ~/.git-completion
 
 bind '"\t":menu-complete'
 
+export GO111MODULE=auto
 export GOPATH="$HOME/workspace"
 export PATH="/usr/local/bin:$PATH"
 export PATH="$PATH:$GOPATH/bin"
