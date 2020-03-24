@@ -11,7 +11,7 @@ bumpscoot() {
 	sh $(git rev-parse --show-toplevel)/src/go/twitter.biz/scoot/scripts/update-scoot.sh bump
 }
 devdeploy() {
-	sh $(git rev-parse --show-toplevel)/scoot/config/scripts/dev_deploy.sh
+	sh $(git rev-parse --show-toplevel)/scoot/config/scripts/dev_deploy.sh $@
 }
 alias scootkill="(lsof -c scheduler -t | xargs kill) && (lsof -c workerserver -t | xargs kill) && (lsof -c apiserver -t | xargs kill)"
 
@@ -179,3 +179,15 @@ alias load="source "${HOME}/.bash_profile""
 
 # fix when time gets out of sync
 alias fixtime="sudo ntpdate -u time.apple.com"
+
+# wait for command to finish before allowing sleep
+# note: uses the first matched command from ps besides grep
+caff () {
+	caffeinate -s -w $(ps -e -opid,args | grep "$@" | grep -v grep | awk '{print $1}')
+}
+
+# mysql server (use commands e.g. start, stop, restart)
+alias mysqlserver="sudo /usr/local/mysql/support-files/mysql.server"
+
+# add as bookmark and click on any webpage - turns all urls into links
+# javascript:function update(node) { const modified = node.innerHTML.replace(/((http|https|ftp)\:\/\/|\bw{3}\.)[a-z0-9\-\.]+\.[a-z]{2,3}(:[a-z0-9]*)?\/?([a-z\u00C0-\u017F0-9\-\._\?\,\'\/\\\+&amp;%\$#\=~])*/gi, url => `<a href="${url}">${url}</a>`); if (modified !== node.innerHTML) node.innerHTML = modified;}; function traverse(node) { for (var i = 0; i < node.children.length; i++) traverse(node.children[i]); if (node.children.length === 0) update(node);}; traverse(document.body)

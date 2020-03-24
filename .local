@@ -15,3 +15,4 @@ HISTSIZE=10000
 HISTFILESIZE=erasedups
 
 export PATH="/usr/local/opt/bison/bin:$PATH"
+export BASH_SILENCE_DEPRECATION_WARNING=1
