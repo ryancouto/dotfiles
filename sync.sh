@@ -14,6 +14,3 @@ for file in $FILES; do
 		fi
 	fi
 done
-
-# cp ~/.local.bash "$pwd"/.bash_profile
-# cp ~/.aliases
