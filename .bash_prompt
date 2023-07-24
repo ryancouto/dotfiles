@@ -11,13 +11,13 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
 	export TERM='xterm-256color';
 fi;
 
+setopt interactivecomments
 prompt_git() {
-	local s='';
-	local branchName='';
+	# local s='';
+	# local branchName='';
 
 	# Check if the current directory is in a Git repository.
-	if [ $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0' ]; then
-
+	if [[ $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0' ]]; then
 		# Get the short symbolic ref.
 		# If HEAD isn’t a symbolic ref, get the short SHA for the latest commit
 		# Otherwise, just give up.
@@ -81,9 +81,10 @@ musicNote="♫"
 lightning="⚡"
 ankh="☥"
 
+setopt PROMPT_SUBST
 # Set the terminal title and prompt.
-PS1="\[${yellow}\]\D{%T} \[${green}\]\W \[${violet}\]\$(prompt_git) \[${white}\]$ \[${reset}\]";
+PS1="${yellow}%* ${green}%1~ ${violet}$(prompt_git) ${white}${lightning} ${reset}";
 export PS1;
 
-PS2="\[${cyan}\]→ \[${reset}\]";
+PS2="${cyan}→ ${reset}";
 export PS2;
