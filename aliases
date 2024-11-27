@@ -29,7 +29,7 @@ function kgj() {
     kubectl get jobs --namespace $(get_namespace $1)
 }
 function kdj() {
-    kubectl describe job --namespace $(get_namespace $1) $1
+    kubectl describe job --namespace $(get_namespace $1)
 }
 function kgs() {
     kubectl get services --namespace $(get_namespace $1)
@@ -45,6 +45,9 @@ function kge() {
 }
 function kl() {
     kubectl logs --namespace $(get_namespace $1) $1
+}
+function kgr() {
+    kubectl get rollout --namespace $(get_namespace $1) $1
 }
 
 function get_namespace() {
