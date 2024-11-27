@@ -1,0 +1,18 @@
+# prompt
+git_branch() {
+	local ref=$(git symbolic-ref HEAD 2> /dev/null)
+	echo ${ref#refs/heads/}
+}
+
+autoload -U add-zsh-hook
+autoload -U colors && colors
+add-zsh-hook precmd set_prompt
+
+function set_prompt() {
+	local branch=$(git_branch)
+	if [ -n "$branch" ]; then
+		PS1="%{$fg[blue]%}%1~ %{$fg[green]%}$branch %{$fg[yellow]%}⚡ %{$reset_color%}%"
+	else
+		PS1="%{$fg[blue]%}%1~ %{$fg[white]%}⚡ %{$reset_color%}%"
+	fi
+}

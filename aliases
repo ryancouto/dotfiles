@@ -1,0 +1,61 @@
+
+###### aliases ######
+alias reload="source ~/.zshrc"
+
+# colorize ls
+alias ls="ls --color=auto"
+
+# git
+alias gs="git status"
+alias gc="git checkout"
+alias gcb="git checkout -b"
+alias gd="git diff"
+alias gp="git push"
+alias gpu="git pull origin master"
+alias gf="git fetch"
+alias ga="git add"
+alias gcm="git commit -m"
+alias gm="git merge"
+alias gb="git branch"
+alias gbd="git branch -D"
+alias gl="git log"
+alias gmo="git merge origin/master"
+
+# aws
+alias sso="aws sso login --profile $1"
+
+# k8s
+function kgj() {
+    kubectl get jobs --namespace $(get_namespace $1)
+}
+function kdj() {
+    kubectl describe job --namespace $(get_namespace $1) $1
+}
+function kgs() {
+    kubectl get services --namespace $(get_namespace $1)
+}
+function kgp() {
+    kubectl get pods --namespace $(get_namespace $1)
+}
+function kdp() {
+    kubectl describe pod --namespace $(get_namespace $1) $1
+}
+function kge() {
+    kubectl get events --namespace $(get_namespace $1) --sort-by='.lastTimestamp'
+}
+
+function get_namespace() {
+    setopt KSH_ARRAYS BASH_REMATCH
+    # given a pod name (eg pr-97393-monolith-redis-master-0, monolith-pr-97393-other-stuff-1), return the namespace (pr-97393)
+    local pod_name=$1
+    if [[ $pod_name =~ pr-[0-9]+ ]]; then
+        # return matched pattern
+        echo "$BASH_REMATCH"
+    else
+        echo "Could not determine namespace"
+        return 1
+    fi
+    unsetopt KSH_ARRAYS BASH_REMATCH
+}
+# directory navigation
+alias ..="cd .."
