@@ -1,0 +1,5 @@
+# plugins / etc
+# autosuggestions
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# fuzzy search
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
