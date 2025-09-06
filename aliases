@@ -24,11 +24,16 @@ alias gmo="git merge origin/master"
 # aws
 alias sso="aws sso login --profile $1"
 
-# k8s
 # Kubernetes namespace resolver function
 _k8s_ns() {
     local input="$1"
-    echo "$input"
+    if [[ "$input" =~ ^(stage0|stage39|stage40)$ ]]; then
+        echo "static-$input"
+    elif [[ "$input" =~ ^[0-9]+$ ]]; then
+        echo "pr-$input"
+    else
+        echo "$input"
+    fi
 }
 
 # Basic kubectl shortcuts
