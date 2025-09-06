@@ -25,41 +25,264 @@ alias gmo="git merge origin/master"
 alias sso="aws sso login --profile $1"
 
 # k8s
-function kgj() {
-    kubectl get jobs --namespace $(get_namespace $1)
-}
-function kdj() {
-    kubectl describe job --namespace $(get_namespace $1)
-}
-function kgs() {
-    kubectl get services --namespace $(get_namespace $1)
-}
-function kgp() {
-    kubectl get pods --namespace $(get_namespace $1)
-}
-function kdp() {
-    kubectl describe pod --namespace $(get_namespace $1) $1
-}
-function kge() {
-    kubectl get events --namespace $(get_namespace $1) --sort-by='.lastTimestamp'
-}
-function kl() {
-    kubectl logs --namespace $(get_namespace $1) $1
-}
-function kgr() {
-    kubectl get rollout --namespace $(get_namespace $1) $1
+# Kubernetes namespace resolver function
+_k8s_ns() {
+    local input="$1"
+    echo "$input"
 }
 
-function get_namespace() {
-    setopt KSH_ARRAYS BASH_REMATCH
-    local pod_name=$1
-    if [[ $pod_name =~ pr-[0-9]+ ]]; then
-        echo "$BASH_REMATCH"
+# Basic kubectl shortcuts
+alias k='kubectl'
+alias kc='kubectl'
+
+# Get pods
+kgp() {
+    if [ $# -eq 0 ]; then
+        kubectl get pods
     else
-        echo "Could not determine namespace"
+        kubectl get pods -n "$(_k8s_ns "$1")"
+    fi
+}
+
+# Get pods with wide output
+kgpw() {
+    if [ $# -eq 0 ]; then
+        kubectl get pods -o wide
+    else
+        kubectl get pods -o wide -n "$(_k8s_ns "$1")"
+    fi
+}
+
+# Get all resources
+kga() {
+    if [ $# -eq 0 ]; then
+        kubectl get all
+    else
+        kubectl get all -n "$(_k8s_ns "$1")"
+    fi
+}
+
+# Get services
+kgs() {
+    if [ $# -eq 0 ]; then
+        kubectl get services
+    else
+        kubectl get services -n "$(_k8s_ns "$1")"
+    fi
+}
+
+# Get deployments
+kgd() {
+    if [ $# -eq 0 ]; then
+        kubectl get deployments
+    else
+        kubectl get deployments -n "$(_k8s_ns "$1")"
+    fi
+}
+
+# Get configmaps
+kgcm() {
+    if [ $# -eq 0 ]; then
+        kubectl get configmaps
+    else
+        kubectl get configmaps -n "$(_k8s_ns "$1")"
+    fi
+}
+
+# Get secrets
+kgsec() {
+    if [ $# -eq 0 ]; then
+        kubectl get secrets
+    else
+        kubectl get secrets -n "$(_k8s_ns "$1")"
+    fi
+}
+
+# Get events (sorted by timestamp)
+kge() {
+    if [ $# -eq 0 ]; then
+        kubectl get events --sort-by='.lastTimestamp'
+    else
+        kubectl get events -n "$(_k8s_ns "$1")" --sort-by='.lastTimestamp'
+    fi
+}
+
+# Logs - smart namespace detection
+kl() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: kl <pod-name> [additional-flags]"
         return 1
     fi
-    unsetopt KSH_ARRAYS BASH_REMATCH
+    
+    local pod_name="$1"
+    shift
+    
+    # Extract namespace from pod name if it follows the pr-XXXXX- pattern
+    if [[ "$pod_name" =~ ^(pr-[0-9]+|static-stage[0-9]+)- ]]; then
+        local ns="${BASH_REMATCH[1]}"
+        kubectl logs "$pod_name" -n "$ns" "$@"
+    else
+        kubectl logs "$pod_name" "$@"
+    fi
 }
+
+# Follow logs
+klf() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: klf <pod-name> [additional-flags]"
+        return 1
+    fi
+    
+    local pod_name="$1"
+    shift
+    
+    if [[ "$pod_name" =~ ^(pr-[0-9]+|static-stage[0-9]+)- ]]; then
+        local ns="${BASH_REMATCH[1]}"
+        kubectl logs "$pod_name" -n "$ns" -f "$@"
+    else
+        kubectl logs "$pod_name" -f "$@"
+    fi
+}
+
+# Describe pod - smart namespace detection
+kdp() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: kdp <pod-name>"
+        return 1
+    fi
+    
+    local pod_name="$1"
+    
+    if [[ "$pod_name" =~ ^(pr-[0-9]+|static-stage[0-9]+)- ]]; then
+        local ns="${BASH_REMATCH[1]}"
+        kubectl describe pod "$pod_name" -n "$ns"
+    else
+        kubectl describe pod "$pod_name"
+    fi
+}
+
+# Describe service
+kds() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: kds <service-name> [namespace]"
+        return 1
+    fi
+    
+    local service_name="$1"
+    local ns="${2:-}"
+    
+    if [ -n "$ns" ]; then
+        kubectl describe service "$service_name" -n "$(_k8s_ns "$ns")"
+    elif [[ "$service_name" =~ ^(pr-[0-9]+|static-stage[0-9]+)- ]]; then
+        local detected_ns="${BASH_REMATCH[1]}"
+        kubectl describe service "$service_name" -n "$detected_ns"
+    else
+        kubectl describe service "$service_name"
+    fi
+}
+
+# Describe deployment
+kdd() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: kdd <deployment-name> [namespace]"
+        return 1
+    fi
+    
+    local deployment_name="$1"
+    local ns="${2:-}"
+    
+    if [ -n "$ns" ]; then
+        kubectl describe deployment "$deployment_name" -n "$(_k8s_ns "$ns")"
+    elif [[ "$deployment_name" =~ ^(pr-[0-9]+|static-stage[0-9]+)- ]]; then
+        local detected_ns="${BASH_REMATCH[1]}"
+        kubectl describe deployment "$deployment_name" -n "$detected_ns"
+    else
+        kubectl describe deployment "$deployment_name"
+    fi
+}
+
+# Exec into pod - smart namespace detection
+kex() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: kex <pod-name> [command]"
+        return 1
+    fi
+    
+    local pod_name="$1"
+    local cmd="${2:-sh}"
+    
+    if [[ "$pod_name" =~ ^(pr-[0-9]+|static-stage[0-9]+)- ]]; then
+        local ns="${BASH_REMATCH[1]}"
+        kubectl exec -it "$pod_name" -n "$ns" -- "$cmd"
+    else
+        kubectl exec -it "$pod_name" -- "$cmd"
+    fi
+}
+
+# Delete pod - smart namespace detection
+kdel() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: kdel <pod-name>"
+        return 1
+    fi
+    
+    local pod_name="$1"
+    
+    if [[ "$pod_name" =~ ^(pr-[0-9]+|static-stage[0-9]+)- ]]; then
+        local ns="${BASH_REMATCH[1]}"
+        kubectl delete pod "$pod_name" -n "$ns"
+    else
+        kubectl delete pod "$pod_name"
+    fi
+}
+
+# Port forward - smart namespace detection
+kpf() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: kpf <pod-name> <port> [local-port]"
+        return 1
+    fi
+    
+    local pod_name="$1"
+    local port="$2"
+    local local_port="${3:-$port}"
+    
+    if [[ "$pod_name" =~ ^(pr-[0-9]+|static-stage[0-9]+)- ]]; then
+        local ns="${BASH_REMATCH[1]}"
+        kubectl port-forward "$pod_name" -n "$ns" "$local_port:$port"
+    else
+        kubectl port-forward "$pod_name" "$local_port:$port"
+    fi
+}
+
+# Get namespaces
+kgns() {
+    kubectl get namespaces
+}
+
+# Set current namespace context
+kns() {
+    if [ $# -eq 0 ]; then
+        kubectl config view --minify --output 'jsonpath={..namespace}'
+        echo
+    else
+        kubectl config set-context --current --namespace="$(_k8s_ns "$1")"
+    fi
+}
+
+# Top pods
+ktop() {
+    if [ $# -eq 0 ]; then
+        kubectl top pods
+    else
+        kubectl top pods -n "$(_k8s_ns "$1")"
+    fi
+}
+
+# Top nodes
+ktopn() {
+    kubectl top nodes
+}
+
 # directory navigation
 alias ..="cd .."
